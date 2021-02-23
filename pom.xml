@@ -180,6 +180,15 @@
             <plugin>
                 <groupId>de.jjohannes</groupId>
                 <artifactId>gradle-module-metadata-maven-plugin</artifactId>
+                <configuration>
+                    <platformDependencies>
+                        <dependency>
+                            <groupId>com.fasterxml.jackson</groupId>
+                            <artifactId>jackson-bom</artifactId>
+                            <version>2.12.1</version>
+                        </dependency>
+                    </platformDependencies>
+                </configuration>
             </plugin>
         </plugins>
     </build>
