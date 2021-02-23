@@ -24,6 +24,7 @@ class KotlinModuleTest {
         assertEquals(constructorModule.nullIsSameAsDefault, builderModule.nullIsSameAsDefault)
         assertEquals(constructorModule.singletonSupport, builderModule.singletonSupport)
         assertEquals(constructorModule.strictNullChecks, builderModule.strictNullChecks)
+        assertEquals(constructorModule.enableDefaultsSupport, builderModule.enableDefaultsSupport)
     }
 
     @Test
