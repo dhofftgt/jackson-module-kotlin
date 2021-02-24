@@ -26,6 +26,8 @@ fun Class<*>.isKotlinClass(): Boolean {
  *                                      the default, collections which are typed to disallow null members
  *                                      (e.g. List<String>) may contain null values after deserialization.  Enabling it
  *                                      protects against this but has significant performance impact.
+ * @param   enableDefaultsSupport   Default: true.  Whether to use kotlin default when property is missing.
+ *
  */
 class KotlinModule constructor (
     val reflectionCacheSize: Int = 512,
@@ -33,7 +35,8 @@ class KotlinModule constructor (
     val nullToEmptyMap: Boolean = false,
     val nullIsSameAsDefault: Boolean = false,
     val singletonSupport: SingletonSupport = DISABLED,
-    val strictNullChecks: Boolean = false
+    val strictNullChecks: Boolean = false,
+    val enableDefaultsSupport : Boolean = true
 ) : SimpleModule(PackageVersion.VERSION) {
     @Deprecated(level = DeprecationLevel.HIDDEN, message = "For ABI compatibility")
     constructor(
@@ -56,7 +59,8 @@ class KotlinModule constructor (
         builder.nullToEmptyMap,
         builder.nullIsSameAsDefault,
         builder.singletonSupport,
-        builder.strictNullChecks
+        builder.strictNullChecks,
+        builder.enableDefaultsSupport
     )
 
     companion object {
@@ -74,7 +78,9 @@ class KotlinModule constructor (
 
         val cache = ReflectionCache(reflectionCacheSize)
 
-        context.addValueInstantiators(KotlinInstantiators(cache, nullToEmptyCollection, nullToEmptyMap, nullIsSameAsDefault, strictNullChecks))
+        if(enableDefaultsSupport) {
+          context.addValueInstantiators(KotlinInstantiators(cache, nullToEmptyCollection, nullToEmptyMap, nullIsSameAsDefault, strictNullChecks))
+        }
 
         when(singletonSupport) {
             DISABLED -> Unit
@@ -119,6 +125,9 @@ class KotlinModule constructor (
         var strictNullChecks = false
             private set
 
+        var enableDefaultsSupport = true
+            private set
+
         fun reflectionCacheSize(reflectionCacheSize: Int) = apply { this.reflectionCacheSize = reflectionCacheSize }
 
         fun nullToEmptyCollection(nullToEmptyCollection: Boolean) =
@@ -133,6 +142,10 @@ class KotlinModule constructor (
 
         fun strictNullChecks(strictNullChecks: Boolean) =
                 apply { this.strictNullChecks = strictNullChecks }
+
+        fun enableDefaultsSupport(enableDefaultsSupport: Boolean) =
+            apply { this.enableDefaultsSupport = enableDefaultsSupport }
+
 
         fun build() = KotlinModule(this)
     }
